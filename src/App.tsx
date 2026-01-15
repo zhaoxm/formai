@@ -1,24 +1,27 @@
-import { useState } from "react";
+import { useState } from 'react';
+import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 
-function App() {
-  const [count, setCount] = useState(0);
+import { Droppable } from './Droppable';
+import { Draggable } from './Draggable';
+
+export default function App() {
+  const [isDropped, setIsDropped] = useState(false);
+  const draggableMarkup = (
+    <Draggable>Drag me</Draggable>
+  );
 
   return (
-    <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <DndContext onDragEnd={handleDragEnd}>
+      {!isDropped ? draggableMarkup : null}
+      <Droppable>
+        {isDropped ? draggableMarkup : 'Drop here'}
+      </Droppable>
+    </DndContext>
   );
-}
 
-export default App;
+  function handleDragEnd(event: DragEndEvent) {
+    if (event.over && event.over.id === 'droppable') {
+      setIsDropped(true);
+    }
+  }
+}
